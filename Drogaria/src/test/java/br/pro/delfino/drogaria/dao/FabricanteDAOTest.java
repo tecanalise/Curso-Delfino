@@ -46,39 +46,18 @@ public class FabricanteDAOTest {
 			System.out.println(fabricante.getCodigo() + " - " + fabricante.getDescricao());
 		}
 	}
-	@Test
-	@Ignore
-	public void excluir(){
-		Long codigo = 9L;
-		FabricanteDAO fabricanteDAO = new FabricanteDAO();
-		Fabricante fabricante = fabricanteDAO.buscar(codigo);
-		
-		if(fabricante == null){
-			System.out.println("Nenhum registro encontrado");
-		}else{
-			fabricanteDAO.excluir(fabricante);
-			System.out.println("Registro removido:");
-			System.out.println(fabricante.getCodigo() + " - " + fabricante.getDescricao());
-		}
-	}
 	
 	@Test
-	public void editar(){
-		Long codigo = 10L;
-		FabricanteDAO fabricanteDAO = new FabricanteDAO();
-		Fabricante fabricante = fabricanteDAO.buscar(codigo);
+	@Ignore
+	public void merge() {
+		//Fabricante fabricante = new Fabricante();
+		//fabricante.setDescricao("Fabricante A");
+		//FabricanteDAO fabricanteDAO = new FabricanteDAO();
+		//fabricanteDAO.merge(fabricante);
 		
-		if(fabricante == null){
-			System.out.println("Nenhum registro encontrado");
-		}else{
-			System.out.println("Registro editado - Antes:");
-			System.out.println(fabricante.getCodigo() + " - " + fabricante.getDescricao());
-			
-			fabricante.setDescricao("SC");
-			fabricanteDAO.editar(fabricante);
-			
-			System.out.println("Registro editado - Depois:");
-			System.out.println(fabricante.getCodigo() + " - " + fabricante.getDescricao());
-		}
+		FabricanteDAO fabricanteDAO = new FabricanteDAO();
+		Fabricante fabricante = fabricanteDAO.buscar(5L);
+		fabricante.setDescricao("Fabricante B");
+		fabricanteDAO.merge(fabricante);
 	}
 }
