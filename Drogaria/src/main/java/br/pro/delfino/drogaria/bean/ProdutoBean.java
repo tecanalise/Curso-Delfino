@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class ProdutoBean implements Serializable {
 	public void listar() {
 		try {
 			ProdutoDAO produtoDAO = new ProdutoDAO();
-			produtos = produtoDAO.listar();
+			produtos = produtoDAO.listar("descricao");
 		} catch (RuntimeException erro) {
 			Messages.addGlobalError("Ocorreu um erro ao tentar listar os produtos");
 			erro.printStackTrace();
@@ -69,7 +70,7 @@ public class ProdutoBean implements Serializable {
 			produto = new Produto();
 
 			FabricanteDAO fabricanteDAO = new FabricanteDAO();
-			fabricantes = fabricanteDAO.listar();
+			fabricantes = fabricanteDAO.listar("descricao");
 		} catch (RuntimeException erro) {
 			Messages.addGlobalError("Ocorreu um erro ao tentar gerar um novo produto");
 			erro.printStackTrace();
@@ -79,6 +80,7 @@ public class ProdutoBean implements Serializable {
 	public void editar(ActionEvent evento) {
 		try {
 			produto = (Produto) evento.getComponent().getAttributes().get("produtoSelecionado");
+			produto.setCaminho("C:/Programação Web com Java/Uploads/" + produto.getCodigo() + ".png");
 
 			FabricanteDAO fabricanteDAO = new FabricanteDAO();
 			fabricantes = fabricanteDAO.listar();
@@ -89,9 +91,18 @@ public class ProdutoBean implements Serializable {
 	}
 
 	public void salvar() {
-		try {
+		try {			
+			if(produto.getCaminho() == null){
+				Messages.addGlobalError("O campo foto é obrigatório");
+				return;
+			}
+			
 			ProdutoDAO produtoDAO = new ProdutoDAO();
-			produtoDAO.merge(produto);
+			Produto produtoRetorno = produtoDAO.merge(produto);
+			
+			Path origem = Paths.get(produto.getCaminho());
+			Path destino = Paths.get("C:/Programação Web com Java/Uploads/" + produtoRetorno.getCodigo() + ".png");
+			Files.copy(origem, destino, StandardCopyOption.REPLACE_EXISTING);
 
 			produto = new Produto();
 
@@ -101,7 +112,7 @@ public class ProdutoBean implements Serializable {
 			produtos = produtoDAO.listar();
 
 			Messages.addGlobalInfo("Produto salvo com sucesso");
-		} catch (RuntimeException erro) {
+		} catch (RuntimeException | IOException erro) {
 			Messages.addFlashGlobalError("Ocorreu um erro ao tentar salvar o produto");
 			erro.printStackTrace();
 		}
@@ -113,11 +124,14 @@ public class ProdutoBean implements Serializable {
 
 			ProdutoDAO produtoDAO = new ProdutoDAO();
 			produtoDAO.excluir(produto);
+			
+			Path arquivo = Paths.get("C:/Programação Web com Java/Uploads/" + produto.getCodigo() + ".png");
+			Files.deleteIfExists(arquivo);
 
 			produtos = produtoDAO.listar();
 
 			Messages.addGlobalInfo("Produto removido com sucesso");
-		} catch (RuntimeException erro) {
+		} catch (RuntimeException | IOException erro) {
 			Messages.addFlashGlobalError("Ocorreu um erro ao tentar remover o produto");
 			erro.printStackTrace();
 		}
@@ -129,8 +143,8 @@ public class ProdutoBean implements Serializable {
 			Path arquivoTemp = Files.createTempFile(null, null);
 			Files.copy(arquivoUpload.getInputstream(), arquivoTemp, StandardCopyOption.REPLACE_EXISTING);
 			produto.setCaminho(arquivoTemp.toString());
-			Messages.addGlobalInfo(produto.getCaminho());
-			System.out.println("Caminho: " + produto.getCaminho());
+			
+			Messages.addGlobalInfo("Upload realizado com sucesso");
 		} catch (IOException erro) {
 			Messages.addGlobalInfo("Ocorreu um erro ao tentar realizar o upload de arquivo");
 			erro.printStackTrace();
