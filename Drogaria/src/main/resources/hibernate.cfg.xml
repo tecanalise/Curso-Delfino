@@ -31,7 +31,7 @@
         <property name="show_sql">true</property>
 
         <!-- Drop and re-create the database schema on startup -->
-        <property name="hbm2ddl.auto">validate</property>
+        <property name="hbm2ddl.auto">update</property>
         
         <mapping class="br.pro.delfino.drogaria.domain.Estado" />
         <mapping class="br.pro.delfino.drogaria.domain.Fabricante" />
@@ -43,6 +43,9 @@
          <mapping class="br.pro.delfino.drogaria.domain.Usuario" />
          <mapping class="br.pro.delfino.drogaria.domain.Venda" />
          <mapping class="br.pro.delfino.drogaria.domain.ItemVenda" />
+         <mapping class="br.pro.delfino.drogaria.domain.Historico" />
+         <mapping class="br.pro.delfino.drogaria.domain.Caixa" />
+         <mapping class="br.pro.delfino.drogaria.domain.Movimentacao" />
 
     </session-factory>
 

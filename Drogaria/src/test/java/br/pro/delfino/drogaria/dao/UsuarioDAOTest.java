@@ -1,5 +1,6 @@
 package br.pro.delfino.drogaria.dao;
 
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -11,7 +12,7 @@ public class UsuarioDAOTest {
 	@Ignore
 	public void salvar(){
 		PessoaDAO pessoaDAO = new PessoaDAO();
-		Pessoa pessoa = pessoaDAO.buscar(1L);
+		Pessoa pessoa = pessoaDAO.buscar(6L);
 		
 		System.out.println("Pessoa Encontrada");
 		System.out.println("Nome: " + pessoa.getNome());
@@ -20,12 +21,27 @@ public class UsuarioDAOTest {
 		Usuario usuario = new Usuario();
 		usuario.setAtivo(true);
 		usuario.setPessoa(pessoa);
-		usuario.setSenha("q1w2e3r4");
+		usuario.setSenhaSemCriptografia("123456");
+		
+		SimpleHash hash = new SimpleHash("md5", usuario.getSenhaSemCriptografia());
+		usuario.setSenha(hash.toHex());
+		
 		usuario.setTipo('A');
 		
 		UsuarioDAO usuarioDAO = new UsuarioDAO();
 		usuarioDAO.salvar(usuario);
 		
 		System.out.println("Usuário salvo com sucesso.");
+	}
+	
+	@Test
+	public void autenticar(){
+		String cpf = "333.333.333-33";
+		String senha = "123456";
+		
+		UsuarioDAO usuarioDAO = new UsuarioDAO();
+		Usuario usuario = usuarioDAO.autenticar(cpf, senha);
+		
+		System.out.println("Usuário autentica: " + usuario);
 	}
 }	
